@@ -111,14 +111,21 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return Math.round(tileWidthPx * DESIGN_H_DP / DESIGN_W_DP);
     }
 
-    /** Height of one grid item: the tile, the name label under it and the item's own padding. */
+    /** Height of one grid item, including the optional name label and the item's own padding. */
     static int itemHeightPx(int tileHeightPx, float density) {
-        return itemHeightPx(tileHeightPx, true, density);
+        return itemHeightPx(tileHeightPx, true, true, density);
     }
 
     /** The same for either layout: the plain grid (dock_row false) uses the compact spacing. */
     static int itemHeightPx(int tileHeightPx, boolean dockRow, float density) {
-        return tileHeightPx + Math.round((dockRow ? ITEM_EXTRA_DP : COMPACT_ITEM_EXTRA_DP) * density);
+        return itemHeightPx(tileHeightPx, dockRow, true, density);
+    }
+
+    /** A name-free row keeps only the item's vertical padding, so hiding names also makes the rows compact. */
+    static int itemHeightPx(int tileHeightPx, boolean dockRow, boolean showNames, float density) {
+        float extra = showNames ? (dockRow ? ITEM_EXTRA_DP : COMPACT_ITEM_EXTRA_DP)
+                : (dockRow ? 16 : 8);
+        return tileHeightPx + Math.round(extra * density);
     }
 
     /**
@@ -221,7 +228,8 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.animations = cfg.animations;
         this.advancedEffects = cfg.animations && cfg.advancedEffects;
         this.showHomeSettings = cfg.showHomeSettingsShortcut;
-        this.showLibrary = cfg.appLibrary;
+        // When the library has its compact header shortcut, keep one entry point instead of duplicating it below the grid.
+        this.showLibrary = cfg.appLibrary && !cfg.libraryButton;
         this.reducedMotion = cfg.reducedMotion;
         this.focusOvershoot = cfg.focusOvershoot;
         this.rowsBelowDock = cfg.rowsBelowDock;
@@ -424,8 +432,8 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         h.card.setVisibility(View.VISIBLE);
         h.card.setFocusable(true);
         h.name.setText(e.name);
-        // The dock has no labels, unless always_show_names asks for them (DockDecoration then makes room in the band).
-        h.name.setVisibility(dockRow && position < dockSize && restNameAlpha == 0f ? View.INVISIBLE : View.VISIBLE);
+        // always_show_names also controls focused grid labels here: the fixed hero title remains the readable name.
+        h.name.setVisibility(restNameAlpha == 0f ? View.GONE : View.VISIBLE);
         boolean focused = h.card.isFocused();   // a rebind after reload() can hit the focused tile
         h.name.setAlpha(focused ? 1f : restNameAlpha);
         h.card.setScaleX(focused && animations ? focusScale() : 1f);
@@ -448,7 +456,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             h.icon.setImageDrawable(e.icon);
             h.icon.setVisibility(View.VISIBLE);
             h.label.setText(e.label);
-            h.label.setVisibility(View.VISIBLE);
+            h.label.setVisibility(restNameAlpha == 0f ? View.GONE : View.VISIBLE);
         }
         h.card.setOnClickListener(v -> launch(e));
         h.card.setOnLongClickListener(v -> {

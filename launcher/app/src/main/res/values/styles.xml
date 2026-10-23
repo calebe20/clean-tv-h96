@@ -26,6 +26,16 @@
     </style>
     <style name="TopButton" parent="TopButtonBase" />
 
+    <!-- Compact header pills: keeps four actions readable on a 720p stick without crowding the clock. -->
+    <style name="TopButtonHeader" parent="TopButtonBase">
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_marginStart">6dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:drawablePadding">6dp</item>
+    </style>
+
     <!-- Icon-only pill: a 42dp circle (pill_bg's 21dp corners) with the 22dp icon centred by even padding. Give it a
          contentDescription, since there is no text. -->
     <style name="TopButtonIcon" parent="TopButtonBase">

@@ -1,0 +1,40 @@
+{
+  "columns": 6,
+  "rows_below_dock": 1,
+  "background_color": "#1B0B12",
+  "sky_intensity": 0,
+  "wallpaper": false,
+  "ambient_glow": false,
+  "reduced_motion": true,
+  "advanced_effects": false,
+  "show_inputs_pill": false,
+  "dock_apps": [
+    "com.google.android.youtube.tv",
+    "ar.tvplayer.tv",
+    "com.android.vending",
+    "com.esaba.downloader",
+    "org.mozilla.firefox",
+    "de.eye_interactive.atvl.chrome",
+    "cm.aptoidetv.pt",
+    "org.xbmc.kodi",
+    "com.netflix.mediaclient"
+  ],
+  "hidden_apps": [
+    "com.android.appdrawer",
+    "com.charon.rocketfly",
+    "com.hcy.remoteAceessdesk",
+    "com.gathin.tvhome"
+  ],
+  "dock_top_padding": 104,
+  "dock_bottom_offset": -12,
+  "grid_title": true,
+  "grid_bands": false,
+  "dock_band": false,
+  "always_show_names": false,
+  "app_library": true,
+  "app_library_selection": true,
+  "library_button": true,
+  "dock_even_padding": false,
+  "reorder_button": true,
+  "tile_menu": true
+}

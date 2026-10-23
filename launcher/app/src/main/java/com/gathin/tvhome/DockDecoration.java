@@ -26,6 +26,8 @@ public class DockDecoration extends RecyclerView.ItemDecoration {
     private final boolean lightGlass;
     /** Padding all round the tiles equal to the gap between them (config.xml dock_even_padding). */
     private final boolean evenPadding;
+    private final int bottomOffset;
+    private final boolean allRows;
     /** The band's top and bottom the glass gradient was made for; it is remade when they move. */
     private float shaderTop = Float.NaN, shaderBottom = Float.NaN;
 
@@ -37,12 +39,14 @@ public class DockDecoration extends RecyclerView.ItemDecoration {
      * @param evenPadding the band's padding is the gap between the tiles on all four sides (dock_even_padding).
      */
     DockDecoration(int dockSize, float density, boolean translucent, boolean names, int opacity, boolean lightGlass,
-                   boolean evenPadding) {
+                   boolean evenPadding, int bottomOffset, boolean allRows) {
+        this.allRows = allRows;
         this.dockSize = dockSize;
         this.density = density;
         this.namesRoom = names ? 22 * density : 0;
         this.lightGlass = lightGlass;
         this.evenPadding = evenPadding;
+        this.bottomOffset = HomeSpacing.bottomOffset(bottomOffset, names);
         band.setColor(translucent ? 0x8C121014 : (Math.round(opacity * 2.55f) << 24) | 0x141416);
         edge.setStyle(Paint.Style.STROKE);
         edge.setStrokeWidth(density);
@@ -67,20 +71,34 @@ public class DockDecoration extends RecyclerView.ItemDecoration {
     public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent,
                                @NonNull RecyclerView.State state) {
         int pos = parent.getChildAdapterPosition(view);
-        if (pos >= 0 && pos < dockSize) {
+        if (pos >= 0 && (pos < dockSize || allRows && view.findViewById(R.id.card) != null)) {
             outRect.top = (int) (6 * density);
-            outRect.bottom = (int) (12 * density);
+            outRect.bottom = (int) (bottomOffset * density);
         }
     }
 
     @Override
     public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+        int first = Integer.MAX_VALUE, last = -1;
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            int pos = parent.getChildAdapterPosition(child);
+            if (pos >= 0 && child.findViewById(R.id.card) != null) {
+                first = Math.min(first, pos / dockSize);
+                last = Math.max(last, pos / dockSize);
+            }
+        }
+        if (!allRows) { first = 0; last = 0; }
+        for (int row = first; row <= last; row++) drawRow(c, parent, row);
+    }
+
+    private void drawRow(Canvas c, RecyclerView parent, int row) {
         boolean any = false;
         int cardWidth = 0;
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
             int pos = parent.getChildAdapterPosition(child);
-            if (pos < 0 || pos >= dockSize) continue;
+            if (pos < 0 || pos / dockSize != row) continue;
             RecyclerView.ViewHolder vh = parent.getChildViewHolder(child);
             View card = vh instanceof AppAdapter.Holder ? ((AppAdapter.Holder) vh).card : child.findViewById(R.id.card);
             if (card == null) continue;
@@ -97,13 +115,17 @@ public class DockDecoration extends RecyclerView.ItemDecoration {
             }
         }
         if (!any) return;
-        float pad = 14 * density;
+        if (allRows) rect.right = parent.getWidth() - rect.left;
+        // With labels hidden the shelf only needs a small breathing edge; keeping the old 14dp
+        // around named tiles would leave a heavy slab around an otherwise compact row.
+        boolean hasNames = namesRoom > 0f;
+        float pad = (hasNames ? 14 : 8) * density;
         // The band can only draw inside the grid, and the first and last dock tiles sit 12dp in from its
         // edges: a full 14dp at the sides sliced the rounded ends flat (#454). Keep the sides, with the
         // 1dp edge line, inside the grid; the top and bottom have room.
         // 22dp at the sides (the grid's 10dp padding makes room): a focused first or last tile grows about 7dp
         // outwards and still keeps about the band's top margin from its rounded end.
-        float sidePad = 22 * density;
+        float sidePad = (hasNames ? 22 : 14) * density;
         float side = Math.max(0f, Math.min(sidePad, Math.min(rect.left, parent.getWidth() - rect.right) - density));
         float radius = AppAdapter.cornerRadius(cardWidth, density);
         if (evenPadding) {

@@ -207,6 +207,12 @@ final class Config {
     /** Hold OK on a tile opens a menu (Move, Remove from Home, App info) instead of App info (config.xml / theme tile_menu). */
     final boolean tileMenu;
 
+    final boolean gridTitle;
+    final boolean gridBands;
+    final boolean dockBand;
+    final int dockTopPadding;
+    final int dockBottomOffset;
+
     private Config(List<String> dockApps, boolean fillDock, List<String> hiddenApps, List<String> libraryApps, String liveTvPackage,
                    String liveTvAction, String liveTvInputId, Map<String, String> launchActions, Map<String, String> appLabels,
                    Map<String, String> appBanners, String sourcePanelService, String sourcePanelAction,
@@ -220,7 +226,12 @@ final class Config {
                    List<RaceWeekend.Race> raceCalendar, boolean cinematicHome, boolean ambientGlow, boolean appGlow, boolean fadeRows, int homeIdleClockMinutes,
                    boolean keyFilter, boolean dockGlass, String glowStyle, boolean wallpaperCaptions,
                    boolean handleViewInputs, boolean tileMenu, boolean dockEvenPadding, boolean cinematicDots, boolean cinematicWhiteFocus, boolean wifiStatusColor, int cinematicScrim, int cinematicArt,
-                   Map<String, Set<String>> wallpaperMoods, boolean gamepadPassthrough) {
+                   Map<String, Set<String>> wallpaperMoods, boolean gamepadPassthrough, int dockTopPadding, int dockBottomOffset, boolean gridTitle, boolean gridBands, boolean dockBand) {
+        this.gridTitle = gridTitle;
+        this.gridBands = gridBands;
+        this.dockBand = dockBand;
+        this.dockTopPadding = dockTopPadding;
+        this.dockBottomOffset = dockBottomOffset;
         this.handleViewInputs = handleViewInputs;
         this.tileMenu = tileMenu;
         this.inputKeycodes = inputKeycodes;
@@ -379,6 +390,11 @@ final class Config {
         boolean keyFilter = res.getBoolean(R.bool.key_filter);
         boolean gamepadPassthrough = res.getBoolean(R.bool.gamepad_passthrough);
         boolean dockGlass = res.getBoolean(R.bool.dock_glass);
+        boolean gridTitle = res.getBoolean(R.bool.grid_title);
+        boolean gridBands = res.getBoolean(R.bool.grid_bands);
+        boolean dockBand = res.getBoolean(R.bool.dock_band);
+        int dockTopPadding = res.getInteger(R.integer.dock_top_padding);
+        int dockBottomOffset = res.getInteger(R.integer.dock_bottom_offset);
         boolean dockEvenPadding = res.getBoolean(R.bool.dock_even_padding);
         boolean cinematicDots = res.getBoolean(R.bool.cinematic_dots);
         boolean cinematicWhiteFocus = res.getBoolean(R.bool.cinematic_white_focus);
@@ -458,6 +474,11 @@ final class Config {
             keyFilter = bool(json, "key_filter", keyFilter);
             gamepadPassthrough = bool(json, "gamepad_passthrough", gamepadPassthrough);
             dockGlass = bool(json, "dock_glass", dockGlass);
+            gridTitle = bool(json, "grid_title", gridTitle);
+            gridBands = bool(json, "grid_bands", gridBands);
+            dockBand = bool(json, "dock_band", dockBand);
+            dockTopPadding = integer(json, "dock_top_padding", dockTopPadding, 0, 500);
+            dockBottomOffset = integer(json, "dock_bottom_offset", dockBottomOffset, -12, 48);
             dockEvenPadding = bool(json, "dock_even_padding", dockEvenPadding);
             cinematicDots = bool(json, "cinematic_dots", cinematicDots);
             cinematicWhiteFocus = bool(json, "cinematic_white_focus", cinematicWhiteFocus);
@@ -520,7 +541,7 @@ final class Config {
                 Math.max(0, Math.min(100, skyIntensity)), settingsKeycodes, settingsKeyPanel, restoreKeyServices, wallpaperEnabled, wallpaper,
                 wallpapers, rotationMinutes, wallpaperDim, dockOpacity, wallpaperOrder, applied,
                 festival, inputKeycodes, appKeys, stockHomeRedirect, json == null ? Collections.emptyList() : raceCalendar(json), cinematic, ambientGlow, appGlow, fadeRows,
-                Math.max(0, idleClockMinutes), keyFilter, dockGlass, glowStyle, wallpaperCaptions, handleViewInputs, tileMenu, dockEvenPadding, cinematicDots, cinematicWhiteFocus, wifiStatusColor, cinematicScrim, cinematicArt, wallpaperMoods, gamepadPassthrough);
+                Math.max(0, idleClockMinutes), keyFilter, dockGlass, glowStyle, wallpaperCaptions, handleViewInputs, tileMenu, dockEvenPadding, cinematicDots, cinematicWhiteFocus, wifiStatusColor, cinematicScrim, cinematicArt, wallpaperMoods, gamepadPassthrough, dockTopPadding, dockBottomOffset, gridTitle, gridBands, dockBand);
     }
 
     /**

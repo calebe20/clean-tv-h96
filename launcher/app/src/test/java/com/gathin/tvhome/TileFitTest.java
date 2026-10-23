@@ -69,4 +69,12 @@ public class TileFitTest {
         assertTrue(AppAdapter.tileWidthPx(INNER, GRID_H, 4, 1, false, true, D)
                 > AppAdapter.tileWidthPx(INNER, GRID_H, 4, 1, true, true, D));
     }
+
+    @Test
+    public void hiddenNamesMakeRowsSlimmer() {
+        int tile = AppAdapter.tileHeightPx(160);
+        assertEquals(tile + Math.round(16 * D), AppAdapter.itemHeightPx(tile, true, false, D));
+        assertTrue(AppAdapter.itemHeightPx(tile, true, false, D)
+                < AppAdapter.itemHeightPx(tile, true, true, D));
+    }
 }

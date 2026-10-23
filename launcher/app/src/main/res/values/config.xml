@@ -17,10 +17,15 @@
 
     <!-- Apps pinned to the dock row at the bottom, in this order. Missing apps are skipped. -->
     <string-array name="dock_apps">
-        <item>com.netflix.ninja</item>
-        <item>com.amazon.amazonvideo.livingroom</item>
         <item>com.google.android.youtube.tv</item>
-        <item>in.startv.hotstar</item>
+        <item>ar.tvplayer.tv</item>
+        <item>com.android.vending</item>
+        <item>com.esaba.downloader</item>
+        <item>org.mozilla.firefox</item>
+        <item>de.eye_interactive.atvl.chrome</item>
+        <item>cm.aptoidetv.pt</item>
+        <item>org.xbmc.kodi</item>
+        <item>com.netflix.mediaclient</item>
     </string-array>
     <!-- With fewer dock_apps than columns (or a dock app that is not installed), the free dock slots take
          the first grid apps, so the dock never shows a gap. false leaves them empty (#162); a theme can
@@ -29,8 +34,10 @@
 
     <!-- Apps never shown as tiles (e.g. the Live TV app, which the Inputs menu already covers). -->
     <string-array name="hidden_apps">
-        <item>com.mediatek.wwtv.tvcenter</item>
-        <item>com.mitv.gallery</item>
+        <item>com.android.appdrawer</item>
+        <item>com.charon.rocketfly</item>
+        <item>com.hcy.remoteAceessdesk</item>
+        <item>com.gathin.tvhome</item>
     </string-array>
 
     <!-- The TV's Live TV / tuner app, offered at the end of the Inputs menu. Leave empty to omit. -->
@@ -210,9 +217,15 @@
          so its corners are concentric with the tiles' and the spacing reads even. false (the default) keeps the fixed
          14dp above and below, up to 22dp at the sides and 26dp corners. Can also be set with "dock_even_padding": true in a theme's config.json. -->
     <bool name="dock_even_padding">false</bool>
+    <!-- Cap space above the dock, in dp; 0 retains the original bottom placement.
+         Header and title clearance are always kept. A theme can set dock_top_padding. -->
+    <integer name="dock_top_padding">104</integer>
+    <!-- Bottom decoration offset in dp: original 12; -12 brings the next row closer
+         when dock labels are hidden. A theme can set dock_bottom_offset. -->
+    <integer name="dock_bottom_offset">-12</integer>
     <!-- A reorder button (two arrows) in the top bar. Off by default: reordering is also in the Settings
          button's long-press menu, so it needs no extra button on screen. -->
-    <bool name="reorder_button">false</bool>
+    <bool name="reorder_button">true</bool>
     <!-- Wi-Fi and Settings as round icon-only buttons (the network name moves to the talkback description);
          Inputs keeps its label. -->
     <bool name="icon_only_buttons">false</bool>
@@ -233,10 +246,10 @@
     <bool name="show_network_pill">true</bool>
     <!-- The Inputs pill in the top bar, shown when the TV has inputs to list. false hides it for good; what the
          remote's Input button does is unchanged. Can also be set with "show_inputs_pill" in a theme. -->
-    <bool name="show_inputs_pill">true</bool>
+    <bool name="show_inputs_pill">false</bool>
     <!-- Names under every tile, not only the focused one: unfocused names stay dimmed, the focused one is full white.
-         With dock_row the band grows down to hold the dock's names too. -->
-    <bool name="always_show_names">false</bool>
+         false hides the lower labels; the fixed title above the dock remains available. -->
+    <bool name="always_show_names">true</bool>
     <!-- Wallpapers decode as RGB_565 (2 bytes a pixel, 4 MB at 1080p), which bands dark gradients such as a night
          sky, most of all under wallpaper_dim. true decodes them in 32-bit colour: 8 MB, for TVs with 2 GB or more. -->
     <bool name="wallpaper_true_color">false</bool>
@@ -254,19 +267,27 @@
     <!-- Hold OK on a tile opens a small menu: Move (picks the tile up for reordering), Remove from Home (only with
          app_library) and App info. false keeps the old behaviour: holding OK opens the app's App info page.
          Can also be set with "tile_menu": true in a theme's config.json. -->
-    <bool name="tile_menu">false</bool>
+    <bool name="tile_menu">true</bool>
 
     <!-- Grid rows left visible under the dock on the home screen. 0 = dock sits at the very bottom. Tiles shrink if
          the dock, its title and this many rows would not otherwise fit the screen height. -->
-    <integer name="rows_below_dock">0</integer>
+    <integer name="rows_below_dock">1</integer>
 
     <!-- The focused dock app's name in large type above the dock. false keeps only the glow, which leaves room
          for bigger tiles when rows_below_dock is 2 or 3. -->
     <bool name="dock_title">true</bool>
+    <!-- Also show grid app names in the fixed top shelf; a theme can set grid_title.
+         false preserves the original dock-only title. -->
+    <bool name="grid_title">false</bool>
+    <!-- Extend the dock-style band to each app row; a theme can set grid_bands.
+         false preserves the original dock-only band. -->
+    <bool name="grid_bands">false</bool>
+    <!-- Draw the rounded dock shelf behind the first row; false keeps the dock row and title without a band. -->
+    <bool name="dock_band">true</bool>
 
     <!-- Tiles per row in the grid; the dock always has this many slots. Tiles are 180dp wide at 4 columns and
          shrink to fit from 5 up (about 144dp at 5, 117dp at 6 on a 1080p TV). -->
-    <integer name="columns">4</integer>
+    <integer name="columns">6</integer>
 
     <!-- Basic motion is on; advanced effects are opt-in in the launcher's own Settings screen. -->
     <bool name="animations">true</bool>
@@ -299,7 +320,7 @@
          slides with no bounce and settles within 5 frames, every animation lasts 90 ms or less, names, top
          shelf, glow and highlight appear instead of fading, and there is no tile entrance. Set it
          here or with "reduced_motion": true in a theme's config.json; false keeps the normal motion. -->
-    <bool name="reduced_motion">false</bool>
+    <bool name="reduced_motion">true</bool>
 
     <!-- The glass highlight springs past the tile it moves to and the focused tile zooms past its size
          before settling. false: both go straight there, with no bounce, while scrolling stays smooth

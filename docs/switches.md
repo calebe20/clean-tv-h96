@@ -29,3 +29,8 @@ the rules. Keys from before this rule are on its wanted list; a screenshot for o
 | `settings_key_panel` | <img src="quick-settings-panel.jpg" width="320" alt="settings_key_panel on a TV"> |
 | `home_idle_clock_minutes` | <img src="clock-screensaver.png" width="320" alt="home_idle_clock_minutes on a TV"> |
 | `gamepad_passthrough` | <img src="switches/gamepad_passthrough.jpg" width="320" alt="gamepad_passthrough on a TV"> |
+| `dock_top_padding` | <img src="switches/compact-home.png" width="320" alt="Reduced space above the dock on an H96 TV stick"> |
+| `dock_bottom_offset` | <img src="switches/compact-home.png" width="320" alt="Reduced gap below the dock on an H96 TV stick"> |
+| `grid_title` | <img src="switches/grid-title.png" width="320" alt="SmartTube in the second row also shown in the fixed title shelf"> |
+| `grid_bands` | <img src="switches/grid-title.png" width="320" alt="Background bands behind both app rows"> |
+| `dock_band` | <img src="switches/dock-band.png" width="320" alt="Compact home layout without the dock shelf band"> |

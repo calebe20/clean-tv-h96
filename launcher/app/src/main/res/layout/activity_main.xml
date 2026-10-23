@@ -314,7 +314,7 @@
 
                 <TextView
                     android:id="@+id/btnWifi"
-                    style="@style/TopButton"
+                    style="@style/TopButtonHeader"
                     android:maxWidth="180dp"
                     android:singleLine="true"
                     android:ellipsize="end"
@@ -324,22 +324,24 @@
 
                 <TextView
                     android:id="@+id/btnReorder"
-                    style="@style/TopButtonIcon"
+                    style="@style/TopButtonHeader"
+                    android:text="@string/reorder"
                     android:contentDescription="@string/reorder"
                     android:drawableStart="@drawable/ic_swap_vert"
                     android:nextFocusDown="@+id/grid" />
 
                 <TextView
                     android:id="@+id/btnLibraryTop"
-                    style="@style/TopButtonIcon"
+                    style="@style/TopButtonHeader"
                     android:visibility="gone"
+                    android:text="@string/apps"
                     android:contentDescription="@string/app_library"
                     android:drawableStart="@drawable/ic_apps"
                     android:nextFocusDown="@+id/grid" />
 
                 <TextView
                     android:id="@+id/btnSettings"
-                    style="@style/TopButton"
+                    style="@style/TopButtonHeader"
                     android:text="@string/settings"
                     android:drawableStart="@drawable/ic_settings"
                     android:nextFocusDown="@+id/grid" />

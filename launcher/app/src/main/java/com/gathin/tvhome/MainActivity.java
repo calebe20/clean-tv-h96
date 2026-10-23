@@ -123,6 +123,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean appLibraryEnabled;
     /** The same opt-in menu is available from either hold-OK or the remote's Menu key. */
     private boolean tileMenuEnabled;
+    private boolean gridTitleEnabled;
     private String inputAction;
     private String inputUriScheme;
     private String sourcePanelService;
@@ -378,6 +379,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         liveTvInputId = cfg.liveTvInputId;
         appLibraryEnabled = cfg.appLibrary;
         tileMenuEnabled = cfg.tileMenu;
+        gridTitleEnabled = cfg.gridTitle;
         inputAction = cfg.inputAction;
         inputUriScheme = cfg.inputUriScheme;
         sourcePanelService = cfg.sourcePanelService;
@@ -511,7 +513,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             public void onChildViewDetachedFromWindow(@NonNull View v) {
             }
         });
-        if (dockRow) grid.addItemDecoration(new DockDecoration(COLUMNS, density, cinematic, cfg.alwaysShowNames, cfg.dockOpacity, cfg.dockGlass, cfg.dockEvenPadding));
+        if (dockRow && cfg.dockBand) grid.addItemDecoration(new DockDecoration(COLUMNS, density, cinematic, cfg.alwaysShowNames, cfg.dockOpacity, cfg.dockGlass, cfg.dockEvenPadding, cfg.dockBottomOffset, cfg.gridBands));
         if (cfg.fadeRows) TopFade.attach(grid, 48 * density);
         // Reduced motion: the tiles are simply there, with no entrance (reloadApps skips it there too).
         if (animations && !reducedMotion) {
@@ -533,8 +535,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // Item height follows the tile size, which follows the columns and the rows that must fit (AppAdapter.tileWidthPx).
             int inner = (r - l) - grid.getPaddingLeft() - grid.getPaddingRight();
             int tileW = AppAdapter.tileWidthPx(inner, h, COLUMNS, rowsBelowDock, cfg.dockTitle, cfg.dockRow, density);
-            int itemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(tileW), density);
-            int dockRow = itemH + (int) (AppAdapter.DOCK_EXTRA_DP * density);   // item height plus DockDecoration offsets
+            int itemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(tileW), true, cfg.alwaysShowNames, density);
+            int dockDecoration = cfg.dockBand ? 6 + HomeSpacing.bottomOffset(cfg.dockBottomOffset, cfg.alwaysShowNames) : 0;
+            int dockRow = itemH + (int) (dockDecoration * density);   // item height plus optional DockDecoration offsets
             int gridRows = itemH * rowsBelowDock;
             // Keep the hero below the header when the library is enabled on a short screen,
             // even when the theme requests an extra visible row below the dock.
@@ -543,6 +546,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // Where the rows cannot fit even at the smallest tile (3 rows with the title on), the title keeps its
             // room above the dock and the last rows run off the bottom instead of the title drawing over the clock.
             if (MainActivity.this.dockRow && cfg.dockTitle && rowsBelowDock > 0) want = Math.max(want, (int) (AppAdapter.TITLE_ROOM_DP * density));
+            if (MainActivity.this.dockRow) {
+                int clearance = Math.max(shelfClearance, cfg.dockTitle ? (int) (AppAdapter.TITLE_ROOM_DP * density) : 0);
+                want = HomeSpacing.topPadding(want, cfg.dockTopPadding, clearance, density);
+            }
             // No dock to push down: the grid starts at the top, with room for the first row's zoom and glass.
             if (!MainActivity.this.dockRow) want = (int) (AppAdapter.TOP_ROOM_DP * density);
             if (grid.getPaddingTop() != want) {
@@ -1551,7 +1558,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         } else {
             // Below the dock (or in a plain grid) the glow follows the tile without the big name; letting it
             // fade out left the grid on plain black.
-            showGlowOnly(position);
+            if (dockRow && gridTitleEnabled) {
+                // The same fixed shelf for every app, anchored above the dock rather than the selected row.
+                Rect anchor = new Rect(0, grid.getPaddingTop() + Math.round(14 * density), 0, 0);
+                root.offsetDescendantRectToMyCoords(grid, anchor);
+                showHero(position, anchor.top);
+            } else {
+                showGlowOnly(position);
+            }
             // Scroll just enough so the whole glass (not only the tile) is visible.
             revealRect.set(0, -(int) pad * 2, item.getWidth(), item.getHeight() + (int) pad);
             grid.requestChildRectangleOnScreen(item, revealRect, reducedMotion);
